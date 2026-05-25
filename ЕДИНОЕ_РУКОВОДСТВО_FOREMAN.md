@@ -367,9 +367,7 @@ Mutation pilot summary: killed=7 survived=0 total=7
 
 Диагностическая страница для спокойной проверки состояния системы:
 
-```text
-https://claim-bot-tzertis.amvera.io/status
-```
+[https://claim-bot-tzertis.amvera.io/status](https://claim-bot-tzertis.amvera.io/status)
 
 Эта страница сделана не для обычной работы с заявками, а для проверки "система жива или нет". Она показывает понятный статус backend, readiness, PostgreSQL, auth, файлов, фоновых задач и интеграций. Страница скрывает секреты и не показывает пароли.
 
