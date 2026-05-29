@@ -10,4 +10,8 @@
 
 PDF-версия для спокойного чтения, печати и передачи сотрудникам:
 
-[Скачать PDF-руководство Foreman](./ЕДИНОЕ_РУКОВОДСТВО_FOREMAN.pdf)
+[Открыть PDF-руководство Foreman в браузере](./ЕДИНОЕ_РУКОВОДСТВО_FOREMAN.pdf)
+
+Если нужно именно скачать файл на домашний ПК или ноутбук:
+
+[Скачать PDF-руководство архивом ZIP](https://raw.githubusercontent.com/tzertistzertis-ux/bot-instruction/main/FOREMAN_GUIDE_PDF.zip)
