@@ -316,7 +316,7 @@ function buildHtml(pageNumbers = {}) {
     color: #102a43;
     background: #edf2f7;
   }
-  .toc-badge { margin: 0; font-size: 7.5pt; min-width: 28mm; text-align: center; }
+  .toc-badge { margin: 0; font-size: 7.5pt; min-width: 28mm; text-align: left; }
   .toc-badge.empty { visibility: hidden; }
   .read { background: #e6f4ff; color: #074b7a; }
   .practice { background: #e9f8ef; color: #116149; }
