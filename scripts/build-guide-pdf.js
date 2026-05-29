@@ -191,7 +191,7 @@ function renderMarkdown(source) {
 }
 
 function tocHtml(toc, pageNumbers = {}) {
-  return toc
+  const rows = toc
     .filter((item) => item.level <= 2)
     .map((item) => {
       const label = item.label ? `<span class="toc-badge ${item.label.kind}">${esc(item.label.text)}</span>` : '<span class="toc-badge empty">Раздел</span>';
@@ -199,6 +199,7 @@ function tocHtml(toc, pageNumbers = {}) {
       return `<a class="toc-row level-${item.level}" href="#${item.id}">${label}<span class="toc-title">${inline(item.text)}</span><span class="toc-page">${page}</span></a>`;
     })
     .join('\n');
+  return `<div class="toc-list">${rows}</div>`;
 }
 
 const { body, toc } = renderMarkdown(md);
@@ -235,10 +236,11 @@ function buildHtml(pageNumbers = {}) {
   }
   .cover-image {
     width: 100%;
-    height: 118mm;
-    object-fit: cover;
+    max-height: 118mm;
+    object-fit: contain;
     border-radius: 10px;
     border: 1px solid #d8e0e6;
+    background: #f8fbfd;
   }
   .cover h1 {
     margin: 22mm 0 4mm;
@@ -261,45 +263,54 @@ function buildHtml(pageNumbers = {}) {
     font-size: 11pt;
   }
   .legend {
-    page-break-after: always;
+    margin-bottom: 7mm;
   }
   .legend-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4mm;
-    margin-top: 5mm;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 2.5mm;
+    margin-top: 4mm;
   }
   .legend-card {
     border: 1px solid #d8e0e6;
-    border-radius: 8px;
-    padding: 4mm;
+    border-radius: 6px;
+    padding: 3mm;
     background: #fbfdff;
+    font-size: 8.8pt;
   }
   .legend-card strong { display: block; margin-bottom: 1mm; }
   .toc { page-break-after: always; }
+  .toc h1 { margin-top: 4mm; }
+  .toc-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 5mm;
+    row-gap: 0;
+  }
   .toc-row {
     display: flex;
     align-items: baseline;
-    gap: 4mm;
+    gap: 2mm;
     color: #102a43;
     text-decoration: none;
     border-bottom: 1px solid #e5ebf0;
-    padding: 2mm 0;
+    padding: 1.2mm 0;
+    min-width: 0;
   }
   .toc-row.level-1 {
-    margin-top: 4mm;
+    margin-top: 2mm;
     font-weight: 700;
-    font-size: 12pt;
+    font-size: 9.4pt;
   }
   .toc-row.level-2 {
-    padding-left: 5mm;
-    font-size: 10pt;
+    font-size: 8.4pt;
   }
   .toc-title {
     flex: 1;
+    min-width: 0;
   }
   .toc-page {
-    min-width: 10mm;
+    min-width: 5.5mm;
     text-align: right;
     color: #486581;
     font-weight: 700;
@@ -307,17 +318,17 @@ function buildHtml(pageNumbers = {}) {
   .toc-badge, .badge {
     display: inline-block;
     white-space: nowrap;
-    font-size: 8pt;
+    font-size: 7.2pt;
     line-height: 1;
     font-weight: 700;
     border-radius: 999px;
-    padding: 2.2mm 3mm;
-    margin-right: 3mm;
+    padding: 1.5mm 2mm;
+    margin-right: 2mm;
     vertical-align: middle;
     color: #102a43;
     background: #edf2f7;
   }
-  .toc-badge { margin: 0; font-size: 7.5pt; min-width: 28mm; text-align: left; }
+  .toc-badge { margin: 0; font-size: 6.4pt; min-width: 20mm; text-align: left; }
   .toc-badge.empty { visibility: hidden; }
   .read { background: #e6f4ff; color: #074b7a; }
   .practice { background: #e9f8ef; color: #116149; }
