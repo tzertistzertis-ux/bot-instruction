@@ -73,6 +73,7 @@ function labelForHeading(text, level) {
 
 function paragraphClass(text) {
   const t = text.toLowerCase();
+  if (/^\s*\[[^\]]+\]\(https?:\/\/[^)]+\)\s*$/.test(text)) return ' action-link';
   if (/главный смысл|практическое правило|важно понимать|что важно/.test(t)) return ' note';
   if (/честно:|нельзя|не должен|не нужно|опасн|вирус|парол|токен|секрет/.test(t)) return ' warn';
   return '';
@@ -359,6 +360,18 @@ function buildHtml(pageNumbers = {}) {
   h3 { margin: 7mm 0 2.5mm; font-size: 13.5pt; }
   h4 { margin: 5mm 0 2mm; font-size: 11.5pt; }
   p { margin: 0 0 2.35mm; }
+  p.action-link {
+    margin: 1mm 0 3mm;
+  }
+  p.action-link a {
+    display: inline-block;
+    font-size: 17pt;
+    line-height: 1.18;
+    font-weight: 800;
+    color: #0b6bcb;
+    text-decoration: none;
+    border-bottom: 2px solid #0b6bcb;
+  }
   h2 + p,
   h3 + p,
   h4 + p {
