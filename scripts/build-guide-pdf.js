@@ -36,6 +36,15 @@ function slugify(value) {
     .slice(0, 80);
 }
 
+function plainHeading(value) {
+  return String(value)
+    .replace(/<br>/g, ' ')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/\*\*([^*]+)\*\*/g, '$1')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 function labelForHeading(text, level) {
   const t = text.toLowerCase();
   if (level === 1 && /foreman:/.test(t)) return null;
@@ -156,7 +165,7 @@ function renderMarkdown(source) {
       const text = heading[2].trim();
       const id = slugify(text);
       const label = labelForHeading(text, level);
-      if (level <= 2) toc.push({ level, text, id, label });
+      if (level <= 2) toc.push({ level, text, plain: plainHeading(text), id, label });
       const badge = label ? `<span class="badge ${label.kind}">${esc(label.text)}</span>` : '';
       const cls = level === 1 ? ' class="chapter"' : '';
       html.push(`<h${level}${cls} id="${id}">${badge}<span>${inline(text)}</span></h${level}>`);
@@ -180,12 +189,13 @@ function renderMarkdown(source) {
   return { body: html.join('\n'), toc };
 }
 
-function tocHtml(toc) {
+function tocHtml(toc, pageNumbers = {}) {
   return toc
     .filter((item) => item.level <= 2)
     .map((item) => {
-      const label = item.label ? `<span class="toc-badge ${item.label.kind}">${esc(item.label.text)}</span>` : '';
-      return `<a class="toc-row level-${item.level}" href="#${item.id}"><span>${inline(item.text)}</span>${label}</a>`;
+      const label = item.label ? `<span class="toc-badge ${item.label.kind}">${esc(item.label.text)}</span>` : '<span class="toc-badge empty">Раздел</span>';
+      const page = pageNumbers[item.id] ? esc(pageNumbers[item.id]) : '';
+      return `<a class="toc-row level-${item.level}" href="#${item.id}">${label}<span class="toc-title">${inline(item.text)}</span><span class="toc-page">${page}</span></a>`;
     })
     .join('\n');
 }
@@ -195,7 +205,8 @@ const heroData = fs.existsSync(heroPath)
   ? `data:image/jpeg;base64,${fs.readFileSync(heroPath).toString('base64')}`
   : '';
 
-const html = `<!doctype html>
+function buildHtml(pageNumbers = {}) {
+  return `<!doctype html>
 <html lang="ru">
 <head>
 <meta charset="utf-8">
@@ -268,8 +279,7 @@ const html = `<!doctype html>
   .toc-row {
     display: flex;
     align-items: baseline;
-    justify-content: space-between;
-    gap: 8mm;
+    gap: 4mm;
     color: #102a43;
     text-decoration: none;
     border-bottom: 1px solid #e5ebf0;
@@ -284,6 +294,15 @@ const html = `<!doctype html>
     padding-left: 5mm;
     font-size: 10pt;
   }
+  .toc-title {
+    flex: 1;
+  }
+  .toc-page {
+    min-width: 10mm;
+    text-align: right;
+    color: #486581;
+    font-weight: 700;
+  }
   .toc-badge, .badge {
     display: inline-block;
     white-space: nowrap;
@@ -297,7 +316,8 @@ const html = `<!doctype html>
     color: #102a43;
     background: #edf2f7;
   }
-  .toc-badge { margin: 0; font-size: 7.5pt; }
+  .toc-badge { margin: 0; font-size: 7.5pt; min-width: 28mm; text-align: center; }
+  .toc-badge.empty { visibility: hidden; }
   .read { background: #e6f4ff; color: #074b7a; }
   .practice { background: #e9f8ef; color: #116149; }
   .optional { background: #fff5d6; color: #725002; }
@@ -409,7 +429,7 @@ const html = `<!doctype html>
 
 <section class="toc">
   <h1>Оглавление</h1>
-  ${tocHtml(toc)}
+  ${tocHtml(toc, pageNumbers)}
 </section>
 
 <main>
@@ -417,8 +437,7 @@ ${body}
 </main>
 </body>
 </html>`;
-
-fs.writeFileSync(htmlPath, html, 'utf8');
+}
 
 const browsers = [
   'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
@@ -429,21 +448,129 @@ const browsers = [
 
 const browser = browsers.find((candidate) => fs.existsSync(candidate));
 if (!browser) {
-  console.error('Chrome or Edge was not found. HTML was generated:', htmlPath);
+  console.error('Chrome or Edge was not found.');
   process.exit(1);
 }
 
-const result = spawnSync(browser, [
-  '--headless',
-  '--disable-gpu',
-  '--no-sandbox',
-  `--print-to-pdf=${pdfPath}`,
-  `file:///${htmlPath.replace(/\\/g, '/')}`,
-], { stdio: 'inherit' });
+function printPdf(outputPath, pageNumbers = {}) {
+  fs.writeFileSync(htmlPath, buildHtml(pageNumbers), 'utf8');
+  const result = spawnSync(browser, [
+    '--headless',
+    '--disable-gpu',
+    '--no-sandbox',
+    '--no-pdf-header-footer',
+    `--print-to-pdf=${outputPath}`,
+    `file:///${htmlPath.replace(/\\/g, '/')}`,
+  ], { stdio: 'inherit' });
 
-if (result.status !== 0) {
-  process.exit(result.status || 1);
+  if (result.status !== 0) {
+    process.exit(result.status || 1);
+  }
 }
 
+function inspectPdf(inputPath) {
+  const tocPath = path.join(os.tmpdir(), 'foreman-guide-toc.json');
+  const reportPath = path.join(os.tmpdir(), 'foreman-guide-pdf-report.json');
+  fs.writeFileSync(tocPath, JSON.stringify(toc), 'utf8');
+  const script = String.raw`
+import json, re, sys
+import fitz
+
+pdf_path, toc_path, report_path = sys.argv[1:4]
+doc = fitz.open(pdf_path)
+toc = json.load(open(toc_path, encoding='utf-8'))
+
+def norm(value):
+    value = re.sub(r'\\s+', ' ', value or '')
+    return value.strip()
+
+pages_text = [norm(page.get_text('text')) for page in doc]
+body_start = 0
+for index, text in enumerate(pages_text):
+    if 'Версия документа:' in text and 'Основной веб-адрес' in text:
+        body_start = index
+        break
+
+toc_links = []
+for page_index in range(0, body_start):
+    page = doc[page_index]
+    for link in page.get_links():
+        target = link.get('page')
+        rect = link.get('from')
+        if target is not None and rect is not None:
+            toc_links.append((page_index, float(rect.y0), float(rect.x0), target + 1))
+toc_links.sort()
+
+page_numbers = {}
+missing = []
+for index, item in enumerate(toc):
+    if index < len(toc_links):
+        page_numbers[item['id']] = toc_links[index][3]
+        continue
+
+    # Fallback for unexpected PDF engines: search only after the guide body starts.
+    needle = norm(item.get('plain') or item.get('text') or '')
+    found = None
+    if needle:
+        for page_index in range(body_start, len(pages_text)):
+            if needle in pages_text[page_index]:
+                found = page_index + 1
+                break
+    if found:
+        page_numbers[item['id']] = found
+    else:
+        missing.append(needle)
+
+empty_pages = []
+for index, page in enumerate(doc):
+    has_text = bool(page.get_text('text').strip())
+    has_images = bool(page.get_images(full=True))
+    has_drawings = bool(page.get_drawings())
+    if not has_text and not has_images and not has_drawings:
+        empty_pages.append(index + 1)
+
+links = 0
+for page in doc:
+    links += len(page.get_links())
+
+report = {
+    'pages': doc.page_count,
+    'body_start': body_start + 1,
+    'tocLinks': len(toc_links),
+    'pageNumbers': page_numbers,
+    'missingHeadings': missing,
+    'emptyPages': empty_pages,
+    'links': links,
+}
+json.dump(report, open(report_path, 'w', encoding='utf-8'), ensure_ascii=False, indent=2)
+`;
+  const result = spawnSync('python', ['-c', script, inputPath, tocPath, reportPath], { encoding: 'utf8' });
+  if (result.status !== 0) {
+    console.error(result.stdout);
+    console.error(result.stderr);
+    process.exit(result.status || 1);
+  }
+  return JSON.parse(fs.readFileSync(reportPath, 'utf8'));
+}
+
+const tempPdfPath = path.join(os.tmpdir(), 'foreman-guide-pdf-first-pass.pdf');
+printPdf(tempPdfPath, {});
+let report = inspectPdf(tempPdfPath);
+
+printPdf(pdfPath, report.pageNumbers);
+report = inspectPdf(pdfPath);
+
+// If adding page numbers changed pagination, rebuild once with the final mapping.
+printPdf(pdfPath, report.pageNumbers);
+report = inspectPdf(pdfPath);
+
 fs.rmSync(htmlPath, { force: true });
+fs.rmSync(tempPdfPath, { force: true });
 console.log(`Generated ${pdfPath}`);
+console.log(`Pages: ${report.pages}`);
+console.log(`TOC links used for page numbers: ${report.tocLinks}`);
+console.log(`Clickable PDF links: ${report.links}`);
+console.log(`Empty pages: ${report.emptyPages.length ? report.emptyPages.join(', ') : 'none'}`);
+if (report.missingHeadings.length) {
+  console.log(`Headings without page number: ${report.missingHeadings.length}`);
+}
