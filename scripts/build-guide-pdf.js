@@ -22,6 +22,7 @@ function esc(value) {
 
 function inline(value) {
   let out = esc(value);
+  out = out.replace(/&lt;br&gt;/g, '<br>');
   out = out.replace(/`([^`]+)`/g, '<code>$1</code>');
   out = out.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
   return out;
@@ -389,14 +390,15 @@ function buildHtml(pageNumbers = {}) {
   table {
     width: 100%;
     border-collapse: collapse;
-    margin: 4mm 0 6mm;
+    margin: 3mm 0 4.5mm;
     page-break-inside: auto;
-    font-size: 9.4pt;
+    font-size: 8.8pt;
+    line-height: 1.32;
   }
   tr { page-break-inside: avoid; page-break-after: auto; }
   th, td {
     border: 1px solid #cbd5df;
-    padding: 2.3mm 2.8mm;
+    padding: 1.45mm 2.1mm;
     text-align: left;
     vertical-align: top;
   }
@@ -404,6 +406,7 @@ function buildHtml(pageNumbers = {}) {
     background: #edf3f8;
     color: #102a43;
     font-weight: 700;
+    line-height: 1.25;
   }
   tbody tr:nth-child(even) td { background: #f8fbfd; }
   a { color: #0b6bcb; }
