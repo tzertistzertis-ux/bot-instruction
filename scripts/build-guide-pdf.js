@@ -23,6 +23,7 @@ function esc(value) {
 function inline(value) {
   let out = esc(value);
   out = out.replace(/&lt;br&gt;/g, '<br>');
+  out = out.replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '<a href="$2">$1</a>');
   out = out.replace(/`([^`]+)`/g, '<code>$1</code>');
   out = out.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
   return out;
