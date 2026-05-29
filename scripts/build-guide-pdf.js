@@ -283,10 +283,7 @@ function buildHtml(pageNumbers = {}) {
   .toc { page-break-after: always; }
   .toc h1 { margin-top: 4mm; }
   .toc-list {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    column-gap: 5mm;
-    row-gap: 0;
+    display: block;
   }
   .toc-row {
     display: flex;
@@ -295,23 +292,24 @@ function buildHtml(pageNumbers = {}) {
     color: #102a43;
     text-decoration: none;
     border-bottom: 1px solid #e5ebf0;
-    padding: 1.2mm 0;
+    padding: 0.95mm 0;
     min-width: 0;
   }
   .toc-row.level-1 {
-    margin-top: 2mm;
+    margin-top: 1.4mm;
     font-weight: 700;
-    font-size: 9.4pt;
+    font-size: 10pt;
   }
   .toc-row.level-2 {
-    font-size: 8.4pt;
+    padding-left: 4mm;
+    font-size: 9pt;
   }
   .toc-title {
     flex: 1;
     min-width: 0;
   }
   .toc-page {
-    min-width: 5.5mm;
+    min-width: 7mm;
     text-align: right;
     color: #486581;
     font-weight: 700;
@@ -329,7 +327,7 @@ function buildHtml(pageNumbers = {}) {
     color: #102a43;
     background: #edf2f7;
   }
-  .toc-badge { margin: 0; font-size: 6.4pt; min-width: 20mm; text-align: left; }
+  .toc-badge { margin: 0; font-size: 6.4pt; min-width: 22mm; text-align: left; }
   .toc-badge.empty { visibility: hidden; }
   .read { background: #e6f4ff; color: #074b7a; }
   .practice { background: #e9f8ef; color: #116149; }
