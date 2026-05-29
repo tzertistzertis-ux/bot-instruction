@@ -217,7 +217,7 @@ function buildHtml(pageNumbers = {}) {
 <style>
   @page {
     size: A4;
-    margin: 18mm 16mm 18mm 16mm;
+    margin: 13mm 16mm 13mm 16mm;
   }
   * { box-sizing: border-box; }
   body {
@@ -225,7 +225,7 @@ function buildHtml(pageNumbers = {}) {
     color: #1f2933;
     font-family: "Segoe UI", Arial, sans-serif;
     font-size: 10.5pt;
-    line-height: 1.55;
+    line-height: 1.43;
     background: #fff;
   }
   .cover {
@@ -353,22 +353,34 @@ function buildHtml(pageNumbers = {}) {
     font-size: 17pt;
     border-bottom: 1px solid #d8e0e6;
     padding-bottom: 2mm;
+    break-after: avoid-page;
   }
   h3 { margin: 7mm 0 2.5mm; font-size: 13.5pt; }
   h4 { margin: 5mm 0 2mm; font-size: 11.5pt; }
-  p { margin: 0 0 3mm; }
+  p { margin: 0 0 2.35mm; }
+  h2 + p,
+  h3 + p,
+  h4 + p {
+    break-after: avoid-page;
+  }
+  h2 + p + p,
+  h3 + p + p,
+  h4 + p + p {
+    break-before: avoid-page;
+  }
   p.note, p.warn {
     padding: 3mm 4mm;
     border-radius: 7px;
     border-left: 4px solid #127c56;
     background: #f0faf5;
+    break-inside: avoid-page;
   }
   p.warn {
     border-left-color: #b54708;
     background: #fff7ed;
   }
-  ul { margin: 0 0 4mm 5mm; padding-left: 5mm; }
-  li { margin-bottom: 1.4mm; }
+  ul { margin: 0 0 3mm 5mm; padding-left: 5mm; }
+  li { margin-bottom: 0.95mm; }
   code {
     font-family: Consolas, "Courier New", monospace;
     font-size: 9pt;
@@ -590,14 +602,13 @@ total = doc.page_count
 for index, page in enumerate(doc):
     rect = page.rect
     text = f"{index + 1} / {total}"
-    footer = fitz.Rect(rect.x0, rect.y1 - 22, rect.x1, rect.y1 - 8)
-    page.insert_textbox(
-        footer,
+    width = fitz.get_text_length(text, fontname="helv", fontsize=8)
+    page.insert_text(
+        ((rect.x0 + rect.x1 - width) / 2, rect.y1 - 10),
         text,
         fontsize=8,
         fontname="helv",
         color=(0.38, 0.49, 0.60),
-        align=1,
     )
 
 doc.save(pdf_path, incremental=True, encryption=fitz.PDF_ENCRYPT_KEEP)
