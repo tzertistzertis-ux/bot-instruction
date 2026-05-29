@@ -286,9 +286,10 @@ function buildHtml(pageNumbers = {}) {
     display: block;
   }
   .toc-row {
-    display: flex;
+    display: grid;
+    grid-template-columns: 24mm minmax(0, 1fr) 9mm;
     align-items: baseline;
-    gap: 2mm;
+    gap: 3mm;
     color: #102a43;
     text-decoration: none;
     border-bottom: 1px solid #e5ebf0;
@@ -305,14 +306,13 @@ function buildHtml(pageNumbers = {}) {
     font-size: 9pt;
   }
   .toc-title {
-    flex: 1;
     min-width: 0;
   }
   .toc-page {
-    min-width: 7mm;
     text-align: right;
     color: #486581;
     font-weight: 700;
+    font-variant-numeric: tabular-nums;
   }
   .toc-badge, .badge {
     display: inline-block;
@@ -327,7 +327,7 @@ function buildHtml(pageNumbers = {}) {
     color: #102a43;
     background: #edf2f7;
   }
-  .toc-badge { margin: 0; font-size: 6.4pt; min-width: 22mm; text-align: left; }
+  .toc-badge { margin: 0; font-size: 6.4pt; width: 22mm; text-align: left; }
   .toc-badge.empty { visibility: hidden; }
   .read { background: #e6f4ff; color: #074b7a; }
   .practice { background: #e9f8ef; color: #116149; }
@@ -513,6 +513,7 @@ for page_index in range(0, body_start):
         if target is not None and rect is not None:
             toc_links.append((page_index, float(rect.y0), float(rect.x0), target + 1))
 toc_links.sort()
+toc_links = toc_links[:len(toc)]
 
 page_numbers = {}
 missing = []
@@ -577,6 +578,41 @@ report = inspectPdf(pdfPath);
 printPdf(pdfPath, report.pageNumbers);
 report = inspectPdf(pdfPath);
 
+function stampPageNumbers() {
+  const script = String.raw`
+import sys
+import fitz
+
+pdf_path = sys.argv[1]
+doc = fitz.open(pdf_path)
+total = doc.page_count
+
+for index, page in enumerate(doc):
+    rect = page.rect
+    text = f"{index + 1} / {total}"
+    footer = fitz.Rect(rect.x0, rect.y1 - 22, rect.x1, rect.y1 - 8)
+    page.insert_textbox(
+        footer,
+        text,
+        fontsize=8,
+        fontname="helv",
+        color=(0.38, 0.49, 0.60),
+        align=1,
+    )
+
+doc.save(pdf_path, incremental=True, encryption=fitz.PDF_ENCRYPT_KEEP)
+`;
+  const result = spawnSync('python', ['-c', script, pdfPath], { encoding: 'utf8' });
+  if (result.status !== 0) {
+    console.error(result.stdout);
+    console.error(result.stderr);
+    process.exit(result.status || 1);
+  }
+}
+
+stampPageNumbers();
+report = inspectPdf(pdfPath);
+
 function buildZip() {
   const script = String.raw`
 import os, sys, zipfile
@@ -600,6 +636,7 @@ fs.rmSync(tempPdfPath, { force: true });
 console.log(`Generated ${pdfPath}`);
 console.log(`Generated ${zipPath}`);
 console.log(`Pages: ${report.pages}`);
+console.log('Footer page numbers: yes');
 console.log(`TOC links used for page numbers: ${report.tocLinks}`);
 console.log(`Clickable PDF links: ${report.links}`);
 console.log(`Empty pages: ${report.emptyPages.length ? report.emptyPages.join(', ') : 'none'}`);
