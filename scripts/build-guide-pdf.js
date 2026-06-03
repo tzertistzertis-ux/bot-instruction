@@ -90,7 +90,9 @@ function tableHtml(rows) {
   html += header.map((cell) => `<th>${inline(cell)}</th>`).join('');
   html += '</tr></thead><tbody>';
   for (const row of body) {
-    html += '<tr>' + row.map((cell) => `<td>${inline(cell)}</td>`).join('') + '</tr>';
+    const isForemanHighlight = /foreman сейчас/i.test(row.join(' '));
+    const trClass = isForemanHighlight ? ' class="foreman-highlight"' : '';
+    html += `<tr${trClass}>` + row.map((cell) => `<td>${inline(cell)}</td>`).join('') + '</tr>';
   }
   html += '</tbody></table>';
   return html;
@@ -433,6 +435,15 @@ function buildHtml(pageNumbers = {}) {
     line-height: 1.25;
   }
   tbody tr:nth-child(even) td { background: #f8fbfd; }
+  tbody tr.foreman-highlight td,
+  tbody tr.foreman-highlight:nth-child(even) td {
+    background: #ffe4ec;
+    border-color: #ef9ab5;
+  }
+  tbody tr.foreman-highlight td:first-child {
+    font-weight: 800;
+    color: #8a1238;
+  }
   a { color: #0b6bcb; }
   .generated {
     margin-top: 8mm;
