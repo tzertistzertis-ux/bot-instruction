@@ -10,4 +10,4 @@
 
 PDF-версия для скачивания на домашний ПК или ноутбук:
 
-[Скачать PDF-руководство архивом ZIP](https://raw.githubusercontent.com/tzertistzertis-ux/bot-instruction/main/FOREMAN_GUIDE_PDF.zip)
+[Скачать PDF-руководство](https://raw.githubusercontent.com/tzertistzertis-ux/bot-instruction/main/ЕДИНОЕ_РУКОВОДСТВО_FOREMAN.pdf)

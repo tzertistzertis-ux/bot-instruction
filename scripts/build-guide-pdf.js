@@ -7,7 +7,6 @@ const root = path.resolve(__dirname, '..');
 const mdPath = path.join(root, 'ЕДИНОЕ_РУКОВОДСТВО_FOREMAN.md');
 const htmlPath = path.join(os.tmpdir(), 'foreman-guide-pdf.html');
 const pdfPath = path.join(root, 'ЕДИНОЕ_РУКОВОДСТВО_FOREMAN.pdf');
-const zipPath = path.join(root, 'FOREMAN_GUIDE_PDF.zip');
 const heroPath = path.join(root, 'assets', 'foreman-login-hero.jpg');
 
 const md = fs.readFileSync(mdPath, 'utf8');
@@ -649,28 +648,9 @@ doc.save(pdf_path, incremental=True, encryption=fitz.PDF_ENCRYPT_KEEP)
 stampPageNumbers();
 report = inspectPdf(pdfPath);
 
-function buildZip() {
-  const script = String.raw`
-import os, sys, zipfile
-
-pdf_path, zip_path = sys.argv[1:3]
-with zipfile.ZipFile(zip_path, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
-    archive.write(pdf_path, 'Foreman-guide.pdf')
-`;
-  const result = spawnSync('python', ['-c', script, pdfPath, zipPath], { encoding: 'utf8' });
-  if (result.status !== 0) {
-    console.error(result.stdout);
-    console.error(result.stderr);
-    process.exit(result.status || 1);
-  }
-}
-
-buildZip();
-
 fs.rmSync(htmlPath, { force: true });
 fs.rmSync(tempPdfPath, { force: true });
 console.log(`Generated ${pdfPath}`);
-console.log(`Generated ${zipPath}`);
 console.log(`Pages: ${report.pages}`);
 console.log('Footer page numbers: yes');
 console.log(`TOC links used for page numbers: ${report.tocLinks}`);
