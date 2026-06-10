@@ -13,7 +13,3 @@
 PDF-версия с датой в имени файла для скачивания на домашний ПК или ноутбук:
 
 [Скачать PDF-руководство 2026-06-10](https://raw.githubusercontent.com/tzertistzertis-ux/bot-instruction/main/ЕДИНОЕ_РУКОВОДСТВО_FOREMAN_2026-06-10.pdf)
-
-Постоянная ссылка на последнюю PDF-версию:
-
-[Скачать актуальное PDF-руководство](https://raw.githubusercontent.com/tzertistzertis-ux/bot-instruction/main/ЕДИНОЕ_РУКОВОДСТВО_FOREMAN.pdf)
