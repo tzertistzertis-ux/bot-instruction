@@ -34,6 +34,28 @@ function inline(value) {
   return out;
 }
 
+function localAssetDataUri(reference) {
+  const cleanReference = String(reference).split('#', 1)[0].split('?', 1)[0];
+  const resolved = path.resolve(root, cleanReference);
+  const relative = path.relative(root, resolved);
+  if (!relative || relative.startsWith('..') || path.isAbsolute(relative)) {
+    throw new Error(`Guide image points outside the repository: ${reference}`);
+  }
+  if (!fs.existsSync(resolved) || !fs.statSync(resolved).isFile()) {
+    throw new Error(`Guide image was not found: ${reference}`);
+  }
+  const extension = path.extname(resolved).toLowerCase();
+  const mime = extension === '.svg'
+    ? 'image/svg+xml'
+    : extension === '.png'
+      ? 'image/png'
+      : extension === '.jpg' || extension === '.jpeg'
+        ? 'image/jpeg'
+        : null;
+  if (!mime) throw new Error(`Unsupported guide image type: ${reference}`);
+  return `data:${mime};base64,${fs.readFileSync(resolved).toString('base64')}`;
+}
+
 function slugify(value) {
   return value
     .toLowerCase()
@@ -165,6 +187,17 @@ function renderMarkdown(source) {
     if (!line.trim()) {
       flushParagraph();
       flushList();
+      continue;
+    }
+
+    const imageLine = /^!\[([^\]]*)\]\(([^)]+)\)$/.exec(line.trim());
+    if (imageLine) {
+      flushParagraph();
+      flushList();
+      const alt = imageLine[1].trim();
+      const reference = imageLine[2].trim();
+      const src = /^https?:\/\//i.test(reference) ? reference : localAssetDataUri(reference);
+      html.push(`<figure class="guide-figure"><img src="${esc(src)}" alt="${esc(alt)}">${alt ? `<figcaption>${inline(alt)}</figcaption>` : ''}</figure>`);
       continue;
     }
 
@@ -399,6 +432,24 @@ function buildHtml(pageNumbers = {}) {
   p.warn {
     border-left-color: #b54708;
     background: #fff7ed;
+  }
+  .guide-figure {
+    margin: 7mm 0 6mm;
+    page-break-before: always;
+    break-inside: avoid-page;
+    text-align: center;
+  }
+  .guide-figure img {
+    display: block;
+    width: 100%;
+    max-height: 245mm;
+    object-fit: contain;
+    margin: 0 auto;
+  }
+  .guide-figure figcaption {
+    margin-top: 2mm;
+    color: #486581;
+    font-size: 8.5pt;
   }
   ul { margin: 0 0 3mm 5mm; padding-left: 5mm; }
   li { margin-bottom: 0.95mm; }
