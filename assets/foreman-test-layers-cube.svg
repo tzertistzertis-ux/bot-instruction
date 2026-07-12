@@ -1,0 +1,145 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1150" viewBox="0 0 1400 1150" role="img" aria-labelledby="title desc">
+  <title id="title">Многослойный куб проверок Foreman</title>
+  <desc id="desc">Двенадцать цветных слоёв проверок Foreman. Более толстые слои соответствуют большему ориентировочному количеству тестов; шкала сжата, чтобы малые слои оставались видимыми.</desc>
+  <defs>
+    <filter id="shadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#0f172a" flood-opacity="0.22"/>
+    </filter>
+    <style>
+      .title { font: 800 40px 'Segoe UI', Arial, sans-serif; fill: #102a43; }
+      .subtitle { font: 400 22px 'Segoe UI', Arial, sans-serif; fill: #486581; }
+      .layer-name { font: 800 22px 'Segoe UI', Arial, sans-serif; fill: #ffffff; }
+      .metric { font: 600 18px 'Segoe UI', Arial, sans-serif; fill: #ffffff; }
+      .badge { font: 800 15px 'Segoe UI', Arial, sans-serif; fill: #102a43; text-anchor: middle; }
+      .note { font: 600 18px 'Segoe UI', Arial, sans-serif; fill: #334e68; }
+      .legend { font: 700 17px 'Segoe UI', Arial, sans-serif; fill: #243b53; }
+    </style>
+  </defs>
+
+  <rect width="1400" height="1150" rx="28" fill="#f7fafc"/>
+  <text x="700" y="52" text-anchor="middle" class="title">Многослойный куб проверок Foreman</text>
+  <text x="700" y="88" text-anchor="middle" class="subtitle">Чем больше объём проверок, тем толще слой · шкала специально сжата</text>
+
+  <g filter="url(#shadow)">
+    <polygon points="160,150 230,120 1230,120 1160,150" fill="#7e22ce" stroke="#ffffff" stroke-width="3"/>
+
+    <g>
+      <rect x="160" y="150" width="1000" height="80" fill="#9f1239" stroke="#ffffff" stroke-width="3"/>
+      <polygon points="1160,150 1230,120 1230,200 1160,230" fill="#701a33" stroke="#ffffff" stroke-width="3"/>
+      <text x="188" y="198" class="layer-name">Mutation</text>
+      <text x="500" y="198" class="metric">114 из 114 искусственных ошибок пойманы</text>
+      <rect x="1058" y="175" width="76" height="30" rx="15" fill="#ffe4e6"/>
+      <text x="1096" y="196" class="badge">M2</text>
+    </g>
+
+    <g>
+      <rect x="160" y="230" width="1000" height="64" fill="#c2410c" stroke="#ffffff" stroke-width="3"/>
+      <polygon points="1160,230 1230,200 1230,264 1160,294" fill="#9a3412" stroke="#ffffff" stroke-width="3"/>
+      <text x="188" y="269" class="layer-name">Flake rehearsal</text>
+      <text x="500" y="269" class="metric">40 повторов: 20× backend + 20× браузер</text>
+      <rect x="1058" y="247" width="76" height="30" rx="15" fill="#ffedd5"/>
+      <text x="1096" y="268" class="badge">M2</text>
+    </g>
+
+    <g>
+      <rect x="160" y="294" width="1000" height="58" fill="#a16207" stroke="#ffffff" stroke-width="3"/>
+      <polygon points="1160,294 1230,264 1230,322 1160,352" fill="#854d0e" stroke="#ffffff" stroke-width="3"/>
+      <text x="188" y="330" class="layer-name">Coverage</text>
+      <text x="500" y="330" class="metric">бот 64% · backend 76% · converter 79%</text>
+      <rect x="1058" y="308" width="76" height="30" rx="15" fill="#fef3c7"/>
+      <text x="1096" y="329" class="badge">M1</text>
+    </g>
+
+    <g>
+      <rect x="160" y="352" width="1000" height="42" fill="#4d7c0f" stroke="#ffffff" stroke-width="3"/>
+      <polygon points="1160,352 1230,322 1230,364 1160,394" fill="#3f6212" stroke="#ffffff" stroke-width="3"/>
+      <text x="188" y="381" class="layer-name">Concurrency</text>
+      <text x="500" y="381" class="metric">3 критичных параллельных сценария</text>
+      <rect x="1058" y="358" width="76" height="30" rx="15" fill="#ecfccb"/>
+      <text x="1096" y="379" class="badge">M2</text>
+    </g>
+
+    <g>
+      <rect x="160" y="394" width="1000" height="54" fill="#15803d" stroke="#ffffff" stroke-width="3"/>
+      <polygon points="1160,394 1230,364 1230,418 1160,448" fill="#166534" stroke="#ffffff" stroke-width="3"/>
+      <text x="188" y="428" class="layer-name">Fault injection</text>
+      <text x="500" y="428" class="metric">отказы почты · хранилища · OCR · rollback</text>
+      <rect x="1058" y="406" width="76" height="30" rx="15" fill="#dcfce7"/>
+      <text x="1096" y="427" class="badge">M2</text>
+    </g>
+
+    <g>
+      <rect x="160" y="448" width="1000" height="66" fill="#047857" stroke="#ffffff" stroke-width="3"/>
+      <polygon points="1160,448 1230,418 1230,484 1160,514" fill="#065f46" stroke="#ffffff" stroke-width="3"/>
+      <text x="188" y="488" class="layer-name">Security и права</text>
+      <text x="500" y="488" class="metric">гость · роли · сессии · файлы · счётчик пересекается</text>
+      <rect x="1024" y="466" width="110" height="30" rx="15" fill="#d1fae5"/>
+      <text x="1079" y="487" class="badge">M1 + M2</text>
+    </g>
+
+    <g>
+      <rect x="160" y="514" width="1000" height="60" fill="#0f766e" stroke="#ffffff" stroke-width="3"/>
+      <polygon points="1160,514 1230,484 1230,544 1160,574" fill="#115e59" stroke="#ffffff" stroke-width="3"/>
+      <text x="188" y="551" class="layer-name">Boundary и negative</text>
+      <text x="500" y="551" class="metric">границы · плохие данные · опасные пути</text>
+      <rect x="1024" y="529" width="110" height="30" rx="15" fill="#ccfbf1"/>
+      <text x="1079" y="550" class="badge">M1 + M2</text>
+    </g>
+
+    <g>
+      <rect x="160" y="574" width="1000" height="58" fill="#0e7490" stroke="#ffffff" stroke-width="3"/>
+      <polygon points="1160,574 1230,544 1230,602 1160,632" fill="#155e75" stroke="#ffffff" stroke-width="3"/>
+      <text x="188" y="610" class="layer-name">UI и visual</text>
+      <text x="500" y="610" class="metric">34 сценария: 31 UI + 3 visual</text>
+      <rect x="1058" y="588" width="76" height="30" rx="15" fill="#cffafe"/>
+      <text x="1096" y="609" class="badge">M1</text>
+    </g>
+
+    <g>
+      <rect x="160" y="632" width="1000" height="54" fill="#0369a1" stroke="#ffffff" stroke-width="3"/>
+      <polygon points="1160,632 1230,602 1230,656 1160,686" fill="#075985" stroke="#ffffff" stroke-width="3"/>
+      <text x="188" y="666" class="layer-name">Integration и E2E</text>
+      <text x="500" y="666" class="metric">25 выделенных: 24 PostgreSQL + 1 сквозной путь</text>
+      <rect x="1058" y="644" width="76" height="30" rx="15" fill="#e0f2fe"/>
+      <text x="1096" y="665" class="badge">M1</text>
+    </g>
+
+    <g>
+      <rect x="160" y="686" width="1000" height="92" fill="#1d4ed8" stroke="#ffffff" stroke-width="3"/>
+      <polygon points="1160,686 1230,656 1230,748 1160,778" fill="#1e40af" stroke="#ffffff" stroke-width="3"/>
+      <text x="188" y="739" class="layer-name">Контракты</text>
+      <text x="500" y="739" class="metric">146+ целевых контрактных проверок</text>
+      <rect x="1058" y="717" width="76" height="30" rx="15" fill="#dbeafe"/>
+      <text x="1096" y="738" class="badge">M1</text>
+    </g>
+
+    <g>
+      <rect x="160" y="778" width="1000" height="150" fill="#4338ca" stroke="#ffffff" stroke-width="3"/>
+      <polygon points="1160,778 1230,748 1230,898 1160,928" fill="#3730a3" stroke="#ffffff" stroke-width="3"/>
+      <text x="188" y="850" class="layer-name">Регрессия</text>
+      <text x="500" y="850" class="metric">≈ 5 000 выполнений автотестов в полном M1</text>
+      <rect x="1058" y="828" width="76" height="30" rx="15" fill="#e0e7ff"/>
+      <text x="1096" y="849" class="badge">M1</text>
+    </g>
+
+    <g>
+      <rect x="160" y="928" width="1000" height="48" fill="#6d28d9" stroke="#ffffff" stroke-width="3"/>
+      <polygon points="1160,928 1230,898 1230,946 1160,976" fill="#5b21b6" stroke="#ffffff" stroke-width="3"/>
+      <text x="188" y="959" class="layer-name">Smoke</text>
+      <text x="500" y="959" class="metric">5+ быстрых проверок «система жива»</text>
+      <rect x="1058" y="937" width="76" height="30" rx="15" fill="#ede9fe"/>
+      <text x="1096" y="958" class="badge">M1</text>
+    </g>
+  </g>
+
+  <g transform="translate(178 1020)">
+    <rect x="0" y="0" width="72" height="30" rx="15" fill="#dbeafe"/>
+    <text x="36" y="21" class="badge">M1</text>
+    <text x="88" y="21" class="legend">обычная проверка затронутых компонентов</text>
+    <rect x="465" y="0" width="72" height="30" rx="15" fill="#ffe4e6"/>
+    <text x="501" y="21" class="badge">M2</text>
+    <text x="553" y="21" class="legend">самостоятельная глубокая проверка рисков</text>
+  </g>
+  <text x="700" y="1090" text-anchor="middle" class="note">Слои пересекаются, поэтому цифры нельзя складывать. Масштаб сжат, чтобы малые слои оставались видимыми.</text>
+  <text x="700" y="1122" text-anchor="middle" class="note">Ориентир по приёмке 10–12.07.2026; точные числа конкретного выпуска находятся в его отчёте.</text>
+</svg>
