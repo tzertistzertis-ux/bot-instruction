@@ -10,6 +10,12 @@ const pdfPath = path.join(root, 'ЕДИНОЕ_РУКОВОДСТВО_FOREMAN.pdf
 const heroPath = path.join(root, 'assets', 'foreman-login-hero.jpg');
 
 const md = fs.readFileSync(mdPath, 'utf8');
+const versionedPdfName = md.match(/Версионный PDF-файл[^`]*`([^`]+\.pdf)`/)?.[1];
+if (!versionedPdfName || path.basename(versionedPdfName) !== versionedPdfName) {
+  console.error('Versioned PDF filename was not found in the guide header.');
+  process.exit(1);
+}
+const versionedPdfPath = path.join(root, versionedPdfName);
 
 function esc(value) {
   return String(value)
@@ -455,7 +461,7 @@ function buildHtml(pageNumbers = {}) {
 <section class="cover">
   <div>
     <h1>Foreman:<br>единое рабочее руководство</h1>
-    <p class="cover-subtitle">Веб-браузер, мобильное приложение, Telegram-бот</p>
+    <p class="cover-subtitle">Веб-браузер, мобильное приложение, Telegram-бот и Web Push</p>
     <div class="cover-note">
       PDF-версия сделана для спокойного чтения: обязательные главы, справочные места и администраторские разделы отмечены отдельно.
     </div>
@@ -647,10 +653,12 @@ doc.save(pdf_path, incremental=True, encryption=fitz.PDF_ENCRYPT_KEEP)
 
 stampPageNumbers();
 report = inspectPdf(pdfPath);
+fs.copyFileSync(pdfPath, versionedPdfPath);
 
 fs.rmSync(htmlPath, { force: true });
 fs.rmSync(tempPdfPath, { force: true });
 console.log(`Generated ${pdfPath}`);
+console.log(`Generated ${versionedPdfPath}`);
 console.log(`Pages: ${report.pages}`);
 console.log('Footer page numbers: yes');
 console.log(`TOC links used for page numbers: ${report.tocLinks}`);
